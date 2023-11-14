@@ -89,7 +89,7 @@ for url in url_list:
         print("It is likely that the website no longer exists or you do not have access to it")
         continue
 
-with open("website_error_data.json", "a") as file:
+with open("website_error_data.json", "w") as file:
     json.dump(website_data, file)
 
 print("Data stored successfully!")
