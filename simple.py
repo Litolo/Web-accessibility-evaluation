@@ -37,9 +37,7 @@ with open('top10milliondomains.csv', newline='') as csvfile:
             url_list.append(spamreader[tempHigh])
 
 website_data = {}
-i = 0
 for url in url_list:
-    i += 1
     try:
         web_url = driver.find_element(By.ID, "input_url")
         web_url.clear()
@@ -91,9 +89,6 @@ for url in url_list:
         print("It is likely that the website no longer exists or you do not have access to it")
         continue
 
-    if i == 20:
-        break
-print(website_data)
 with open("website_error_data.json", "a") as file:
     json.dump(website_data, file)
 
