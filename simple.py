@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import time
 import csv
+import json
 from random import randint
 
 
@@ -35,8 +36,10 @@ with open('top10milliondomains.csv', newline='') as csvfile:
             randomUpper.append(tempHigh)
             url_list.append(spamreader[tempHigh])
 
-
+website_data = {}
+i = 0
 for url in url_list:
+    i += 1
     try:
         web_url = driver.find_element(By.ID, "input_url")
         web_url.clear()
@@ -82,9 +85,17 @@ for url in url_list:
                     else:
                         header += "_"+item
             errors[header] = lastNum
-        print(errors)
+        website_data[url[1]] = errors
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         print("It is likely that the website no longer exists or you do not have access to it")
         continue
+
+    if i == 20:
+        break
+print(website_data)
+with open("website_error_data.json", "a") as file:
+    json.dump(website_data, file)
+
+print("Data stored successfully!")
 driver.quit

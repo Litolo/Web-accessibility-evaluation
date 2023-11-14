@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 top10milliondomains.csv
+*.json
 # C extensions
 *.so
 
