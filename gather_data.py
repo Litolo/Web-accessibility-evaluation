@@ -77,7 +77,7 @@ for url in url_list:
                         else:
                             header += "_"+item
                 errors[header] = lastNum
-            website_data[url[1]] = errors
+            website_data[url[1]] = [errors, url[2]]
         except NoSuchElementException:
             # we've been blocked by WAVE so reopen the driver and try the rest of the urls
             driver.quit
