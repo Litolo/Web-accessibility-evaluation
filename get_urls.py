@@ -36,4 +36,5 @@ with open('top10milliondomains.csv', newline='') as csvfile:
                 randomUpper.append(tempHigh)
                 writer.writerow(spamreader[tempHigh])
                 counter += 1
-    csvfile.close()
+    csvwrite.close()
+csvfile.close()

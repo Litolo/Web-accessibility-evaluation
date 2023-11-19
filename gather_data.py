@@ -46,7 +46,7 @@ for url in url_list:
 
             # repeating code here
             errors = {}
-            for list_element in flagged_list[:len(flagged_list)-1]:
+            for list_element in flagged_list[:len(flagged_list)+1]:
                 temp = list_element.text.split()
                 i = 0
                 lastNum = temp[0]
