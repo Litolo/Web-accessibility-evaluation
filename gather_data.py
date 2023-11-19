@@ -41,7 +41,7 @@ for url in url_list:
 
             details_button = driver.find_element(By.ID, "tab-details")
             details_button.click()
-            time.sleep(5)
+            time.sleep(10)
             flagged_list = driver.find_elements(By.CLASS_NAME, 'icon_group')
 
             # repeating code here
