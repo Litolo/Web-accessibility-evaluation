@@ -3,14 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import csv
-# do a independent t test on errors.
-
-# First we need to compute the A3 aggregation score for each website. B_p = total points of failure
-
-f = open('website_error_data.json')
-data = json.load(f)
-
-urls = []
+# to do a independent t test on errors we need to first compute the A3 aggregation score for each website.
+# Please see the report on what each variable does if you are confused
 
 # needs refactoring
 def get_checkpoints() -> (str, str, str, str):
@@ -122,7 +116,7 @@ def compute_A3(data_url: [str, str], url: str, F_b: int, checkpoint_headers: ([s
             try:
                 violations.append(data_url[error_header])
                 #  technically there can be more than one language per page
-                possible_violations.append(1)
+                possible_violations.append(data_url[error_header])
             except KeyError:
                 continue
         elif 'empty_heading' in error_header.lower():
@@ -186,20 +180,30 @@ def compute_A3(data_url: [str, str], url: str, F_b: int, checkpoint_headers: ([s
             product_val *= pow((1-F_b), ((B_pb_vals[i]/N_pb_vals[i]) + (B_pb_vals[i] / B_p)))
     return 1 - product_val
 
-checkpoint_headers = get_checkpoints()
-for url in data:
-    urls.append(url)
-with open('A3_results.csv', 'w', newline='') as csvwrite:
-    writer = csv.writer(csvwrite)
-    writer.writerow(["Wesbite URL", "A3 Value", "Page Rank"])
-    for url in urls:
-        # get total number of potential points of failure. # errors + # features + # alerts // 2)
-        # some alerts are not always a failure but some are so we will be generous and divide by 2
-        # F_p = severity of the violation of barrier b we take assume each violation is as severe as each other
-        # usually this value can change the severity of violations based on the disability group we are testing for 
-        # (i.e. blind will care more about no alt text than deaf)
-        F_b = 0.1
-        a3 = compute_A3(data[url][0], url, F_b, checkpoint_headers = checkpoint_headers)
-        writer.writerow([url, a3, data[url][1]])    
-csvwrite.close()
+def get_A3_to_file(json_filepath: str, outpout_filepath: str) -> None:
+    f = open(json_filepath)
+    data = json.load(f)
+    urls = []
+    checkpoint_headers = get_checkpoints()
+    for url in data:
+        urls.append(url)
+    with open(outpout_filepath, 'w', newline='') as csvwrite:
+        writer = csv.writer(csvwrite)
+        writer.writerow(["Wesbite URL", "A3 Value", "Page Rank"])
+        for url in urls:
+            # get total number of potential points of failure. # errors + # features + # alerts // 2)
+            # some alerts are not always a failure but some are so we will be generous and divide by 2
+            # F_p = severity of the violation of barrier b we take assume each violation is as severe as each other
+            # usually this value can change the severity of violations based on the disability group we are testing for 
+            # (i.e. blind will care more about no alt text than deaf)
+            F_b = 0.1
+            a3 = compute_A3(data[url][0], url, F_b, checkpoint_headers = checkpoint_headers)
+            writer.writerow([url, a3, data[url][1]])    
+    csvwrite.close()
+    return
+
+get_A3_to_file('website_error_data.json', 'results/A3_pagerank_results.csv')
+get_A3_to_file('sample_data/government_error_data.json','results/A3_government_results.csv')
+
+
 
