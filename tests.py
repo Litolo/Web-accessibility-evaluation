@@ -168,7 +168,10 @@ def compute_A3(data_url: [str, str], url: str, F_b: int, checkpoint_headers: ([s
         elif 'low_contrast' in error_header.lower():
             try:
                 violations.append(data_url[error_header])
-                possible_violations.append(total_text_elements)
+                if data_url > total_text_elements:
+                    possible_violations.append(data_url[error_header])
+                else:
+                    possible_violations.append(total_text_elements)
             except KeyError:
                 continue
 
