@@ -26,7 +26,6 @@ def create_json_data(urls_list_filepaths: [str], json_name: str) -> None:
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service=service, options=options)
     driver.get("https://wave.webaim.org/")
-    driver.maximize_window()
     web_url = driver.find_element(By.ID, "input_url")
     web_url.send_keys("https://google.com")
     submit = driver.find_element(By.ID, "button_wave")
@@ -37,7 +36,7 @@ def create_json_data(urls_list_filepaths: [str], json_name: str) -> None:
     url_list = gather_urls(urls_list_filepaths)
     # run the tool on each url and if we have any errors, retry for a max of 10 times
     for url in url_list:
-        for atsplit_tool_textt in range(10):
+        for i in range(10):
             # we may find some errors in the tool:
             # (the page may not exist or the tool will see we are automating its use and kick us off)
             try:
@@ -125,6 +124,7 @@ def create_json_data(urls_list_filepaths: [str], json_name: str) -> None:
                 #     ...
                 # }
                 website_data[url[1]] = [errors, url[2]]
+                break
             except NoSuchElementException:
                 # we've been blocked by WAVE so reopen the driver and try the rest of the urls
                 driver.quit
@@ -132,7 +132,6 @@ def create_json_data(urls_list_filepaths: [str], json_name: str) -> None:
                 options = webdriver.ChromeOptions()
                 driver = webdriver.Chrome(service=service, options=options)
                 driver.get("https://wave.webaim.org/")
-                driver.maximize_window()
                 web_url = driver.find_element(By.ID, "input_url")
                 web_url.send_keys("https://google.com")
                 submit = driver.find_element(By.ID, "button_wave")
@@ -144,7 +143,6 @@ def create_json_data(urls_list_filepaths: [str], json_name: str) -> None:
                 print(f"Unexpected {err=}, {type(err)=}")
                 print("It is likely that the website no longer exists or you do not have access to it")
                 print("Trying again...")
-            break
         else:
             # something went seriously wrong (it failed running 10 times)
             print(f"--- {url[1]} does not work at all --- ")
@@ -157,5 +155,7 @@ def create_json_data(urls_list_filepaths: [str], json_name: str) -> None:
     driver.quit
     return
 
-create_json_data(['sample_data/high_open_page_rank_urls.csv', 'sample_data/low_open_page_rank_urls.csv'], 'sample_data/pagerank_error_data.json')
-create_json_data(['sample_data/government_urls.csv', 'sample_data/non_government_urls.csv'], 'sample_data/government_error_data.json')
+create_json_data(['sample_data/high_open_page_rank_urls.csv'], 'sample_data/high_pagerank_error_data.json')
+create_json_data(['sample_data/low_open_page_rank_urls.csv'], 'sample_data/low_pagerank_error_data.json')
+create_json_data(['sample_data/government_urls.csv'], 'sample_data/government_error_data.json')
+create_json_data(['sample_data/non_government_urls.csv'], 'sample_data/non_government_error_data.json')

@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import csv
+from time import sleep
 # to do a independent t test on errors we need to first compute the A3 aggregation score for each website.
 # Please see the report on what each variable does if you are confused
 
@@ -12,7 +13,6 @@ def get_checkpoints() -> (str, str, str, str):
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service=service, options=options)
     driver.get("https://wave.webaim.org/api/docs?format=html")
-    driver.maximize_window()
     h2_elements = driver.find_elements(By.TAG_NAME, "h2")
     headers = []
     for h2_ele in h2_elements:
@@ -40,7 +40,8 @@ def compute_A3(data_url: [str, str], url: str, F_b: int, checkpoint_headers: ([s
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service=service, options=options)
     driver.get("https://"+url)
-    driver.maximize_window()
+    # let the page load
+    sleep(10)
     # get alt text information
     img_elements = driver.find_elements(By.TAG_NAME, "img")
     long_desc_imgs_amount = len([x for x in img_elements if x.get_attribute('longdesc')])
@@ -66,6 +67,9 @@ def compute_A3(data_url: [str, str], url: str, F_b: int, checkpoint_headers: ([s
         except:
             continue
     table_headers_no = len(driver.find_elements(By.TAG_NAME, "th"))
+    # we will use this to estimate how many possible contrast errors there are we will take any
+    # element with text to be a possible contrast error
+    total_text_elements = len(driver.find_elements(By.XPATH, "//*[text()]"))
     violations = []
     possible_violations = []
     for error_header in error_headers:
@@ -161,13 +165,12 @@ def compute_A3(data_url: [str, str], url: str, F_b: int, checkpoint_headers: ([s
                 possible_violations.append(data_url[error_header])
             except KeyError:
                 continue
-        # ignore contrast for now
-        # elif 'low_contrast' in error_header.lower():
-        #     try:
-        #         violations.append(data_url[error_header])
-        #         possible_violations.append()
-        #     except KeyError:
-        #         continue
+        elif 'low_contrast' in error_header.lower():
+            try:
+                violations.append(data_url[error_header])
+                possible_violations.append(total_text_elements)
+            except KeyError:
+                continue
 
     B_pb_vals = violations
     N_pb_vals = possible_violations
@@ -197,13 +200,22 @@ def get_A3_to_file(json_filepath: str, outpout_filepath: str) -> None:
             # usually this value can change the severity of violations based on the disability group we are testing for 
             # (i.e. blind will care more about no alt text than deaf)
             F_b = 0.1
-            a3 = compute_A3(data[url][0], url, F_b, checkpoint_headers = checkpoint_headers)
-            writer.writerow([url, a3, data[url][1]])    
+            # if a selenium error then just try again 10 times
+            for i in range(5):
+                try:
+                    a3 = compute_A3(data[url][0], url, F_b, checkpoint_headers = checkpoint_headers)
+                    writer.writerow([url, a3, data[url][1]])   
+                    break
+                except Exception as err:
+                    print(err)
+            else:
+                print(url, "did not work, likely something is wrong with the website")
     csvwrite.close()
     return
 
-get_A3_to_file('website_error_data.json', 'results/A3_pagerank_results.csv')
+get_A3_to_file('sample_data/high_pagerank_error_data.json', 'results/A3_high_pagerank_results.csv')
+get_A3_to_file('sample_data/low_pagerank_error_data.json', 'results/A3_low_pagerank_results.csv')
 get_A3_to_file('sample_data/government_error_data.json','results/A3_government_results.csv')
-
+get_A3_to_file('sample_data/non_government_error_data.json','results/A3_non_government_results.csv')
 
 

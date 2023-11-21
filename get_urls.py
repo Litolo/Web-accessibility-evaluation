@@ -18,7 +18,7 @@ with open('top10milliondomains.csv', newline='') as csvfile:
     spamreader = list(csv.reader(csvfile, delimiter=',', quotechar='"'))
     # get 100 websites in csv where page rank between 10 and 6 and 100 of the bottom 20% percentile
     counter = 0
-    government_domains = ['.gov', '.gv', '.gob','.gc','.gouv','.go.','.govt', '.admin.ch','.government','.gub']
+    government_domains = ['.gov', '.gv', '.gob','.gc','.gouv','.go.','.govt', '.admin.ch','.government','.gub','.mil']
     # repeated code consider making a function
     with open('sample_urls/government_urls.csv', 'w', newline='') as csvwrite:
         writer = csv.writer(csvwrite)
