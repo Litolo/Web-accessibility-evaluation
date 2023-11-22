@@ -195,7 +195,7 @@ def get_A3_to_file(json_filepath: str, outpout_filepath: str) -> None:
         urls.append(url)
     with open(outpout_filepath, 'w', newline='') as csvwrite:
         writer = csv.writer(csvwrite)
-        writer.writerow(["Wesbite URL", "A3 Value", "Page Rank"])
+        writer.writerow(["Wesbite URL", "A3 Value", "PageRank"])
         for url in urls:
             # get total number of potential points of failure. # errors + # features + # alerts // 2)
             # some alerts are not always a failure but some are so we will be generous and divide by 2
