@@ -4,7 +4,7 @@
 This project aims to develop evaluate accesibility of websites. It compares seperate samples of 100 websites with varying PageRank. A comparison of government/non-government domains is also done, both by sampling 100 urls and comparing them.
 
 ## Technologies Used
-- [WAVE](https://wave.webaim.org/) acessibility tool is used to find website violations. The web version of WAVE is used in this project however if extending you may choose to substitute for the paid API instead.
+- [WAVE](https://wave.webaim.org/) acessibility tool is used to find website violations. The web version of WAVE is used in this project. If you wish to extend this project you may choose to substitute for the paid API instead.
 - [Selenium](https://selenium-python.readthedocs.io/) is used for automating web form submissions.
 
 ## Project structure & How to Run
