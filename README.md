@@ -12,3 +12,6 @@ This project aims to develop evaluate accesibility of websites. It compares sepe
 [gather_data.py](gather_data.py) will automate the running of the WAVE tool on the websites and scrape the accessibility report and save the results to .json files in the [sample_data](sample_data/) folder. \
 [save_A3.py](save_A3.py) calculates the A3 accessibility score for every website and saves the results to a .csv file in the [results](results/) folder. \
 Graphing and analysis is done in [generate_information.ipynb](generate_information.ipynb).
+
+## Final Report
+You can read the final report [here](An_Evaluation_on_Accessibility_of_Websites_Based_on_Popularity.pdf)
